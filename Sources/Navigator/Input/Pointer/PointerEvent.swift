@@ -181,3 +181,12 @@ public struct MouseButtons: OptionSet, Equatable, CustomStringConvertible {
         return "[" + buttons.joined(separator: ",") + "]"
     }
 }
+
+public extension PointerEvent {
+    /// Creates a pointer event, for navigators implemented outside the toolkit.
+    /// A factory rather than an initializer, so it never competes with the
+    /// internal memberwise initializer.
+    static func make(pointer: Pointer, phase: Phase, location: CGPoint, modifiers: KeyModifiers = []) -> PointerEvent {
+        PointerEvent(pointer: pointer, phase: phase, location: location, modifiers: modifiers, targetElement: nil)
+    }
+}
