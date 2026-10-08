@@ -60,6 +60,17 @@ extension PDFTapGestureController: UIGestureRecognizerDelegate {
     }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        (otherGestureRecognizer as? UITapGestureRecognizer)?.numberOfTouchesRequired == 1
+        guard let tap = otherGestureRecognizer as? UITapGestureRecognizer, tap.numberOfTouchesRequired == 1 else {
+            return false
+        }
+        // The single tap of the non-editable text interaction installed on
+        // PDFKit's text input view recognizes intermittently. Waiting for it
+        // to fail would drop navigation taps; the selection it would clear is
+        // cleared in `didTap` instead. Links keep priority through the
+        // `PDFView`'s own tap recognizer.
+        if tap.numberOfTapsRequired == 1, tap.view is UITextInput {
+            return false
+        }
+        return true
     }
 }
